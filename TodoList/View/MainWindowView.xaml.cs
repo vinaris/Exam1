@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +17,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Model;
 using ViewModel;
+using ViewModel.Annotations;
+using TaskStatus = Model.TaskStatus;
 
 namespace View
 {
@@ -30,11 +35,7 @@ namespace View
 
         private void TreeView_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            UserTask task = e.NewValue as UserTask;
-            if (task != null)
-            {
-                ((MainWindowViewModel) DataContext).SelectedTask = task;
-            }
+           ((MainWindowViewModel)DataContext).SelectedTask = e.NewValue as UserTask;
         }
     }
 }

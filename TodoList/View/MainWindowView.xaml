@@ -5,29 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
         xmlns:model="clr-namespace:Model;assembly=Model"
+        xmlns:converters="clr-namespace:View.Converters"
+        xmlns:controlls="clr-namespace:View.Controlls"
+        xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:behaviours="clr-namespace:View.Behaviours"
         mc:Ignorable="d"
         Title="Список задач" Height="360" Width="650" ResizeMode="NoResize">
     <Window.Resources>
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="2 2"/>
+        <converters:DateTimeConverter x:Key="DateTimeConverter" />
+        <converters:GroupByGroupConverter x:Key="GroupByGroupConverter" />
+        <Style x:Key="BaseStyle">
+            <Setter Property="Control.Margin" Value="2 2"/>
         </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="Margin" Value="2 2"/>
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="2 2"/>
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="2 2"/>
-        </Style>
-        <Style x:Key="TreeTriggers">
-            <Style.Triggers>
-                <DataTrigger x:Name="OverDue"  Binding="{Binding Path=DueDate, NotifyOnSourceUpdated=True}" 
-                             Value="01.01.2016">
-                    <Setter Property="Control.Visibility"  Value="Collapsed"></Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}" />
+        <Style TargetType="CheckBox" BasedOn="{StaticResource BaseStyle}" />
+        <Style TargetType="TextBox" BasedOn="{StaticResource BaseStyle}" />
+        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseStyle}" />
+        <CollectionViewSource x:Key="cvs1" Source="{Binding UserTasks}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Group"/>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        <DataTemplate x:Key="TaskTemplate">
+           <StackPanel>
+                <TextBlock Text="{Binding Path=Name}"/>
+            </StackPanel>
+        </DataTemplate>
+        <HierarchicalDataTemplate x:Key="GroupByGroupTemplate" ItemTemplate="{StaticResource TaskTemplate}"
+                                  ItemsSource="{Binding Converter={StaticResource GroupByGroupConverter}}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Images/catalog.jpg" Width="16" Height="16"></Image>
+                <TextBlock Text="{Binding Path=Name}" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -38,22 +50,17 @@
             <RowDefinition Height="2*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Grid Column="0" Row="0">
-            <TreeView SelectedItemChanged="TreeView_OnSelectedItemChanged">
-                <TreeViewItem Name="OverDue" Header="Просроченные" 
-                              ItemsSource="{Binding UserTasks}" 
-                              DisplayMemberPath="Name"
-                              Style="{StaticResource TreeTriggers}"/>
-                <TreeViewItem Name="Tomorrow" Header="Истекают завтра" 
-                              ItemsSource="{Binding UserTasks}" 
-                              DisplayMemberPath="Name"/>
-            </TreeView>
+        <Grid Column="0" Row="0">            
+            <controlls:ExtendedTreeView ItemsSource="{Binding Source={StaticResource cvs1}, Path=Groups}"
+                                        ItemTemplate="{StaticResource GroupByGroupTemplate}" 
+                                        SelectedItemChanged="TreeView_OnSelectedItemChanged">
+            </controlls:ExtendedTreeView>
         </Grid>
         <Grid Row="1" Grid.Column="0">
             <GroupBox Header="Действия">
                 <StackPanel>
-                    <CheckBox Content="Показать завершённые" IsChecked="True" />
-                    <CheckBox Content="Показать отменённые" IsChecked="True" />
+                    <CheckBox Content="Показать завершённые" IsChecked="{Binding IsComplited, Mode=TwoWay}"/>
+                    <CheckBox Content="Показать отменённые" IsChecked="{Binding IsCanceled, Mode=TwoWay}"/>
                     <Button Content="Добавить Группу" />
                     <Button Content="Добавить Задачу" />
                 </StackPanel>
@@ -62,14 +69,14 @@
         <Grid Column="1" Grid.Row="0" RowSpan="2">
             <GroupBox Header="Выбранная задача" VerticalContentAlignment="Stretch">
                 <StackPanel VerticalAlignment="Stretch">
-                    <TextBlock Text="Название задачи" FontWeight="Bold" />
+                    <TextBlock Text="Название задачи" FontWeight="Bold"/>
                     <TextBox Text="{Binding SelectedTask.Name}"/>
                     <TextBlock Text="Описание задачи" FontWeight="Bold" />
                     <TextBox Text="{Binding SelectedTask.Description}" 
                                      TextWrapping="Wrap" 
                                      VerticalScrollBarVisibility="Auto"
                                      VerticalContentAlignment="Stretch"
-                                     Height="140"/>
+                                     Height="140" AcceptsTab="True" AcceptsReturn="True"/>
                     <TextBlock Text="Статус" FontWeight="Bold" />
                     <ComboBox ItemsSource="{local:EnumValues {x:Type model:TaskStatus}}" 
                               SelectedValuePath="EnumValue" 
