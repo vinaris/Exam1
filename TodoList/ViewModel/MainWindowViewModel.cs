@@ -15,17 +15,16 @@ namespace ViewModel
     {
         private UserTask _selectedTask;
 
-        public ObservableCollection<string> Groups { get; set; } = new ObservableCollection<string>
-        {
-            "Просроченные", "Скоро истекают"
-        };
-
+        public ObservableCollection<string> Groups { get; set; } = new ObservableCollection<string>();
         public MainWindowViewModel()
         {
-            TreeUserTasks = CollectionViewSource.GetDefaultView(UserTasks);
+            foreach (var userTask in UserTasks.Where(userTask => !Groups.Contains(userTask.Group)))
+            {
+                Groups.Add(userTask.Group);
+            }
         }
 
-        public static ObservableCollection<UserTask> UserTasks { get; set; } = new ObservableCollection<UserTask>
+        public ObservableCollection<UserTask> UserTasks { get; set; } = new ObservableCollection<UserTask>
         {
             new UserTask
             {
@@ -85,49 +84,11 @@ namespace ViewModel
             }
         }
 
-        private bool _isCanceled;
-        public bool IsCanceled
+        public void AddNewTask(string name, string description, string group, DateTime dueDate)
         {
-            get { return _isCanceled; }
-            set
-            {
-                if (value == _isCanceled) return;
-                _isCanceled = value;
-                OnPropertyChanged();
-            }
+             UserTasks.Add(new UserTask { Name = name, Description = description, Group = @group, DueDate = dueDate});
         }
-        private bool _isComplited;
-        private ICollectionView _treeUserTasks;
-
-        public bool IsComplited
-        {
-            get { return _isComplited; }
-            set
-            {
-                if (value == _isComplited) return;
-                _isComplited = value;
-                OnPropertyChanged();
-            }
-        }
-
-        //private bool TasksFilter(object obj)
-        //{
-        //    UserTask task = obj as UserTask;
-        //    if (((MainWindowViewModel)DataContext).IsCanceled)
-        //        return task != null && task.Status != TaskStatus.Complited;
-        //}
-
-        public ICollectionView TreeUserTasks    
-        {
-            get { return _treeUserTasks; }
-            set
-            {
-                if (Equals(value, _treeUserTasks)) return;
-                _treeUserTasks = value;
-                OnPropertyChanged();
-            }
-        }
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

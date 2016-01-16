@@ -20,16 +20,6 @@ namespace View.Converters
             sortByGroup.Source = group.Items;
             sortByGroup.GroupDescriptions.Add(new PropertyGroupDescription("Name"));
             return sortByGroup.View.Groups;
-
-
-            //ICollectionView collection = value as ICollectionView;
-            //if (collection == null)
-            //{
-            //    return Binding.DoNothing;
-            //}
-            //CollectionViewSource sortByGroup = new CollectionViewSource();
-            //sortByGroup.GroupDescriptions.Add(new PropertyGroupDescription("Group"));
-            //return sortByGroup.View.Groups;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

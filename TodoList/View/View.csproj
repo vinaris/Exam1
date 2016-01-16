@@ -83,7 +83,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Behaviours\BindableSelectedItemBehavior.cs" />
     <Compile Include="Controlls\ExtendedTreeView.cs" />
     <Compile Include="Converters\GroupByGroupConverter .cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />

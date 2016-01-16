@@ -11,36 +11,6 @@ namespace View.Controlls
 {
     public class ExtendedTreeView : TreeView
     {
-        //public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register("SelectedItem", typeof(Object), typeof(ExtendedTreeView), new PropertyMetadata(null));
-        //public new object SelectedItem
-        //{
-        //    get { return (object)GetValue(SelectedItemProperty); }
-        //    set
-        //    {
-        //        SetValue(SelectedItemsProperty, value);
-        //        NotifyPropertyChanged("SelectedItem");
-        //    }
-        //}
-
-        //public ExtendedTreeView()
-        //{
-        //    SelectedItemChanged += MyTreeView_SelectedItemChanged;
-        //}
-
-        //private void MyTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<Object> e)
-        //{
-        //    SelectedItem = base.SelectedItem;
-        //}
-
-        //public event PropertyChangedEventHandler PropertyChanged;
-        //private void NotifyPropertyChanged(String aPropertyName)
-        //{
-        //    if (PropertyChanged != null)
-        //        PropertyChanged(this, new PropertyChangedEventArgs(aPropertyName));
-        //}
-
-
-
         public ExtendedTreeView() : base()
         {
             this.SelectedItemChanged += ___ICH;
@@ -53,7 +23,6 @@ namespace View.Controlls
             {
                 SetValue(SelectedItem_Property, SelectedItem);
             }
-
         }
 
         public object SelectedItem_

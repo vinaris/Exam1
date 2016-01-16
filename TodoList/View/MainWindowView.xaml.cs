@@ -1,24 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Model;
 using ViewModel;
-using ViewModel.Annotations;
-using TaskStatus = Model.TaskStatus;
 
 namespace View
 {
@@ -33,9 +16,67 @@ namespace View
             DataContext = new MainWindowViewModel();
         }
 
+        private void ShowActiveGrid(GroupBox nameOfGroupBox)
+        {
+            NewTaskGroupBox.Visibility = Visibility.Hidden;
+            SelectedTaskGroupBox.Visibility = Visibility.Hidden;
+            NewGroupGroupBox.Visibility = Visibility.Hidden;
+            nameOfGroupBox.Visibility = Visibility.Visible;
+        }
+
+        private void ClearControls()
+        {
+            NewNameTask.Text = null;
+            NewDescriptionTask.Text = null;
+            NewGroupTask.Text = null;
+            NewDueDateTask.SelectedDate = null;
+            NewNameGroup.Text = null;
+        }
+
         private void TreeView_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-           ((MainWindowViewModel)DataContext).SelectedTask = e.NewValue as UserTask;
+            // ((MainWindowViewModel)DataContext).SelectedTask = 
+            var task = e.NewValue as UserTask;
+            ShowActiveGrid(SelectedTaskGroupBox);
+        }
+
+        private void AddNewTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (NewDueDateTask.SelectedDate != null && NewNameTask.Text != null && NewGroupTask.Text != null)
+            {
+                ((MainWindowViewModel) DataContext).AddNewTask(NewNameTask.Text, NewDescriptionTask.Text,
+                    NewGroupTask.Text, NewDueDateTask.SelectedDate.Value);
+                ClearControls();
+                ShowActiveGrid(SelectedTaskGroupBox);
+            }
+        }
+
+        private void CreateTaskButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            ClearControls();
+            ShowActiveGrid(NewTaskGroupBox);
+        }
+
+        private void AddNewGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (NewNameGroup.Text != null)
+            {
+                ((MainWindowViewModel) DataContext).Groups.Add(NewNameGroup.Text);
+                ClearControls();
+                ShowActiveGrid(SelectedTaskGroupBox);
+            }
+        }
+
+        private void CreateGroupButton(object sender, RoutedEventArgs e)
+        {
+            ClearControls();
+            ShowActiveGrid(NewGroupGroupBox);
+        }
+
+        private void CancelCreation(object sender, RoutedEventArgs e)
+        {
+            ShowActiveGrid(SelectedTaskGroupBox);
+            ClearControls();
         }
     }
 }

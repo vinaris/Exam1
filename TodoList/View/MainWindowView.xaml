@@ -8,11 +8,8 @@
         xmlns:converters="clr-namespace:View.Converters"
         xmlns:controlls="clr-namespace:View.Controlls"
         xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:behaviours="clr-namespace:View.Behaviours"
         mc:Ignorable="d"
-        Title="Список задач" Height="360" Width="650" ResizeMode="NoResize">
+        Title="Список задач" Height="380" Width="650" ResizeMode="NoResize">
     <Window.Resources>
         <converters:DateTimeConverter x:Key="DateTimeConverter" />
         <converters:GroupByGroupConverter x:Key="GroupByGroupConverter" />
@@ -29,7 +26,7 @@
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
         <DataTemplate x:Key="TaskTemplate">
-           <StackPanel>
+            <StackPanel>
                 <TextBlock Text="{Binding Path=Name}"/>
             </StackPanel>
         </DataTemplate>
@@ -50,10 +47,10 @@
             <RowDefinition Height="2*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Grid Column="0" Row="0">            
+        <Grid Column="0" Row="0">
             <controlls:ExtendedTreeView ItemsSource="{Binding Source={StaticResource cvs1}, Path=Groups}"
                                         ItemTemplate="{StaticResource GroupByGroupTemplate}" 
-                                        SelectedItemChanged="TreeView_OnSelectedItemChanged">
+                                        SelectedItemChanged="TreeView_OnSelectedItemChanged" SelectedItem_="{Binding SelectedTask, Mode=TwoWay}">
             </controlls:ExtendedTreeView>
         </Grid>
         <Grid Row="1" Grid.Column="0">
@@ -61,13 +58,13 @@
                 <StackPanel>
                     <CheckBox Content="Показать завершённые" IsChecked="{Binding IsComplited, Mode=TwoWay}"/>
                     <CheckBox Content="Показать отменённые" IsChecked="{Binding IsCanceled, Mode=TwoWay}"/>
-                    <Button Content="Добавить Группу" />
-                    <Button Content="Добавить Задачу" />
+                    <Button Content="Добавить Группу" Click="CreateGroupButton"/>
+                    <Button Content="Добавить Задачу" Click="CreateTaskButton_OnClick"/>
                 </StackPanel>
             </GroupBox>
         </Grid>
         <Grid Column="1" Grid.Row="0" RowSpan="2">
-            <GroupBox Header="Выбранная задача" VerticalContentAlignment="Stretch">
+            <GroupBox x:Name="SelectedTaskGroupBox" Header="Выбранная задача" VerticalContentAlignment="Stretch">
                 <StackPanel VerticalAlignment="Stretch">
                     <TextBlock Text="Название задачи" FontWeight="Bold"/>
                     <TextBox Text="{Binding SelectedTask.Name}"/>
@@ -84,6 +81,37 @@
                               SelectedValue="{Binding SelectedTask.Status}" />
                     <TextBlock Text="Планируемая дата завершения" FontWeight="Bold" />
                     <DatePicker SelectedDate="{Binding SelectedTask.DueDate}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox x:Name="NewTaskGroupBox"  Header="Добавить задачу" VerticalContentAlignment="Stretch" Visibility="Hidden">
+                <StackPanel VerticalAlignment="Stretch">
+                    <TextBlock Text="Название задачи" FontWeight="Bold"/>
+                    <TextBox x:Name="NewNameTask" />
+                    <TextBlock Text="Описание задачи" FontWeight="Bold" />
+                    <TextBox x:Name="NewDescriptionTask" 
+                                     TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto"
+                                     VerticalContentAlignment="Stretch"
+                                     Height="140" AcceptsTab="True" AcceptsReturn="True"/>
+                    <TextBlock Text="Группа" FontWeight="Bold" />
+                    <ComboBox ItemsSource="{Binding Groups}"            
+                              x:Name="NewGroupTask" />
+                    <TextBlock Text="Планируемая дата завершения" FontWeight="Bold" />
+                    <DatePicker x:Name="NewDueDateTask" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Добавить" Width="180" Click="AddNewTaskButton_Click"></Button>
+                        <Button Content="Отменить" Width="180" Click="CancelCreation"></Button>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox x:Name="NewGroupGroupBox"  Header="Добавить группу" VerticalContentAlignment="Stretch" Visibility="Hidden">
+                <StackPanel VerticalAlignment="Stretch">
+                    <TextBlock Text="Название группы" FontWeight="Bold"/>
+                    <TextBox x:Name="NewNameGroup" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Добавить" Width="180" Click="AddNewGroupButton_Click"></Button>
+                        <Button Content="Отменить" Width="180" Click="CancelCreation"></Button>
+                    </StackPanel>
                 </StackPanel>
             </GroupBox>
         </Grid>
